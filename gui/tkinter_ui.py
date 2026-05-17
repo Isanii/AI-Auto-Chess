@@ -342,9 +342,13 @@ class AutoChessGUI:
             self.strategy_b.get()
         )
 
-        formation_a = strategy_a.choose_formation()
+        # Generate formations with proper positioning:
+        # Strategy A (Player) at BOTTOM (rows 2-3)
+        # Strategy B (Enemy) at TOP (rows 0-1)
+        formation_a = strategy_a.choose_formation(top_side=False)  # Player formation (bottom)
         formation_b = strategy_b.choose_formation(
-            formation_a
+            formation_a,
+            top_side=True  # Enemy formation (top)
         )
 
         stats_text = (
@@ -394,6 +398,7 @@ class AutoChessGUI:
         self.counter_button.config(
             state="disabled"
         )
+        self.tournament_button.config(state="disabled")
         self.end_button.config(state="normal")
         self.replay_next_event()
 
@@ -555,6 +560,12 @@ class AutoChessGUI:
             )
 
             self.replay_job = None
+
+        # Disable other buttons when starting a counter pick
+        self.start_button.config(state="disabled")
+        self.counter_button.config(state="disabled")
+        self.tournament_button.config(state="disabled")
+        self.end_button.config(state="normal")
 
         # CLEAR LOG
         self.result_text.delete(
@@ -793,12 +804,16 @@ class AutoChessGUI:
         )
 
         # FORMATIONS
-        formation_a = strategy_a.choose_formation()
-
-        formation_b = strategy_b.choose_formation(
-            formation_a
+        # Strategy A = Player (BOTTOM)
+        formation_a = strategy_a.choose_formation(
+            top_side=False
         )
 
+        # Strategy B = Enemy (TOP)
+        formation_b = strategy_b.choose_formation(
+            formation_a,
+            top_side=True
+        )
         # CREATE TEAMS
         self.player_team = combat.create_battle_team(
             formation_a
@@ -1086,13 +1101,13 @@ class AutoChessGUI:
 
         self.canvas.create_text(
             label_x, label_y_top,
-            text="Player",
+            text="Enemy",
             fill="white",
             font=("Arial", 16, "bold")
         )
         self.canvas.create_text(
             label_x, label_y_bottom,
-            text="Enemy",
+            text="Player",
             fill="white",
             font=("Arial", 16, "bold")
         )

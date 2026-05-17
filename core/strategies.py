@@ -15,7 +15,8 @@ class BaseStrategy:
 
     def choose_formation(
         self,
-        opponent_formation=None
+        opponent_formation=None,
+        top_side=True
     ):
         raise NotImplementedError
 
@@ -31,11 +32,12 @@ class RandomStrategy(BaseStrategy):
 
     def choose_formation(
         self,
-        opponent_formation=None
+        opponent_formation=None,
+        top_side=True
     ):
 
         return formation.generate_random_formation(
-            top_side=True
+            top_side=top_side
         )
 
 
@@ -50,11 +52,12 @@ class GreedyHPStrategy(BaseStrategy):
 
     def choose_formation(
         self,
-        opponent_formation=None
+        opponent_formation=None,
+        top_side=True
     ):
 
         formations = formation.generate_all_formations(
-            top_side=True
+            top_side=top_side
         )[:300]
 
         best_score = float("-inf")
@@ -86,11 +89,12 @@ class GreedyATKStrategy(BaseStrategy):
 
     def choose_formation(
         self,
-        opponent_formation=None
+        opponent_formation=None,
+        top_side=True
     ):
 
         formations = formation.generate_all_formations(
-            top_side=True
+            top_side=top_side
         )[:300]
 
         best_score = float("-inf")
@@ -122,13 +126,14 @@ class MinimaxDepth2Strategy(BaseStrategy):
 
     def choose_formation(
         self,
-        opponent_formation=None
+        opponent_formation=None,
+        top_side=True
     ):
 
         if opponent_formation is None:
 
             opponent_formation = formation.generate_random_formation(
-                top_side=False
+                top_side=not top_side
             )
         minimax.nodes_visited = 0
         score, best_formation = minimax.minimax(
@@ -151,14 +156,15 @@ class MinimaxDepth3Strategy(BaseStrategy):
 
     def choose_formation(
         self,
-        opponent_formation=None
+        opponent_formation=None,
+        top_side=True
     ):
         alphabeta.nodes_visited = 0
         alphabeta.branches_pruned = 0
         if opponent_formation is None:
 
             opponent_formation = formation.generate_random_formation(
-                top_side=False
+                top_side=not top_side
             )
 
         score, best_formation = alphabeta.alphabeta(

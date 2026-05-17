@@ -6,8 +6,9 @@ def find_best_counter(
     opponent_formation
 ):
 
+    # Generate counter formations for the bottom side (where player will be)
     candidates = formation.generate_all_formations(
-        top_side=True,
+        top_side=False,
         limit=150
     )
 

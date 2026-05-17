@@ -7,10 +7,13 @@ def run_match(
     strategy_b
 ):
 
-    formation_a = strategy_a.choose_formation()
+    # Strategy A (Player) at BOTTOM (rows 2-3)
+    formation_a = strategy_a.choose_formation(top_side=False)
 
+    # Strategy B (Enemy) at TOP (rows 0-1)
     formation_b = strategy_b.choose_formation(
-        formation_a
+        formation_a,
+        top_side=True
     )
 
     result = combat.simulate_battle(
