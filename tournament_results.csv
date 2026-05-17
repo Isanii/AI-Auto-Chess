@@ -1,6 +1,0 @@
-Strategy,Wins,Losses,Draws,AvgTurns
-Random,3,1,4,13.5
-MinimaxDepth2,3,0,5,11.25
-GreedyHP,2,0,6,5.12
-MinimaxDepth3,2,1,5,8.62
-GreedyATK,0,8,0,5.25
