@@ -255,7 +255,7 @@ class BoardRenderer:
                     fill="white"
                 )
 
-            """            # PLAYER/ENEMY LABEL
+            # PLAYER/ENEMY LABEL
             label_text = "Player" if team_name == "A" else "Enemy"
             label_color = "#00FF00" if team_name == "A" else "#FF0000"  # Green for Player, Red for Enemy
             self.canvas.create_text(
@@ -265,7 +265,7 @@ class BoardRenderer:
                 fill=label_color,
                 font=("Arial", 9, "bold")
             )
-            """
+            
             # HP BAR BG
             hp_bar_width = 70
             hp_bar_height = 10
@@ -387,7 +387,8 @@ class BoardRenderer:
         attacker_row,
         attacker_col,
         defender_row,
-        defender_col
+        defender_col,
+        attacker_team
     ):
 
         canvas_width = self.canvas.winfo_width()
@@ -438,13 +439,17 @@ class BoardRenderer:
             +
             constants.CELL_SIZE // 2
         )
-
+        line_color = (
+            "#00FF00"
+            if attacker_team == "A"
+            else "#FF3333"
+        )
         self.canvas.create_line(
             x1,
             y1,
             x2,
             y2,
-            fill="yellow",
+            fill=line_color,
             width=4,
             arrow=LAST,
             arrowshape=(10, 15, 5)

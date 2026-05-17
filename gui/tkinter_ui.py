@@ -424,6 +424,10 @@ class AutoChessGUI:
             self.counter_button.config(
                 state="normal"
             )
+            
+            self.tournament_button.config(
+                state="normal"
+            )
 
             self.result_text.insert(
                 "end",
@@ -512,7 +516,8 @@ class AutoChessGUI:
             event.attacker_row,
             event.attacker_col,
             event.defender_row,
-            event.defender_col
+            event.defender_col,
+            event.attacker_team
         )
         self.renderer.draw_damage_popup(
             event.defender_row,
@@ -682,7 +687,10 @@ class AutoChessGUI:
     def run_tournament(self):
 
         self.replay_running = False
-
+        self.start_button.config(state="disabled")
+        self.counter_button.config(state="disabled")
+        self.tournament_button.config(state="disabled")
+        self.end_button.config(state="normal")
         # Clear previous tournament data
         if self.replay_job:
             self.root.after_cancel(self.replay_job)
@@ -983,7 +991,8 @@ class AutoChessGUI:
             event.attacker_row,
             event.attacker_col,
             event.defender_row,
-            event.defender_col
+            event.defender_col,
+            event.attacker_team
         )
         self.renderer.draw_damage_popup(
             event.defender_row,
@@ -1028,6 +1037,10 @@ class AutoChessGUI:
         self.show_tournament_chart(
             sorted_standings
         )
+        self.start_button.config(state="normal")
+        self.counter_button.config(state="normal")
+        self.tournament_button.config(state="normal")
+        self.end_button.config(state="disabled")
     def update_speed(
         self,
         value
@@ -1114,6 +1127,9 @@ class AutoChessGUI:
 
         # Clear any ongoing replay
         self.result_text.insert("end", "\n=== BATTLE ENDED ===\n")
+        self.tournament_button.config(
+            state="normal"
+        )
     def export_tournament_results(
         self,
         standings
