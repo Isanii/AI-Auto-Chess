@@ -60,6 +60,27 @@ def choose_target(
     return candidates[0][4]
 
 
+def find_closest_pair(
+    team_a: list[models.BattleUnit],
+    team_b: list[models.BattleUnit]
+):
+    """Find the pair (a from team_a, b from team_b) with minimal Manhattan distance.
+    Returns (a, b). If multiple pairs have same distance, the first encountered is returned."""
+    min_dist = float('inf')
+    best_pair = None
+    for a in team_a:
+        if not a.alive:
+            continue
+        for b in team_b:
+            if not b.alive:
+                continue
+            dist = manhattan_distance(a.unit.position, b.unit.position)
+            if dist < min_dist:
+                min_dist = dist
+                best_pair = (a, b)
+    return best_pair
+
+
 def attack(
     attacker: models.BattleUnit,
     defender: models.BattleUnit
@@ -67,9 +88,6 @@ def attack(
 
     damage_raw = attacker.unit.piece.atk - defender.unit.piece.defense
     damage = max(0, damage_raw)
-    # Ensure minimum damage of 1 if attacker has positive attack
-    if damage == 0 and attacker.unit.piece.atk > 0:
-        damage = 1
 
     hp_before = defender.current_hp
 
@@ -117,204 +135,83 @@ def simulate_battle(
     )
 
     combat_log = []
+    turn = 0  # even turns: A attacks, odd turns: B attacks
+    max_turns = constants.MAX_TURNS * 2  # safety limit
 
-    turn = 1
-
-    # Prevent infinite battles
-    zero_damage_turns = 0
-
-    while turn <= constants.MAX_TURNS:
-
-        # Reset zero damage counter at start of each turn
-        zero_damage_turns = 0
-
-        # TEAM A ATTACK
-        for attacker in team_a:
-
-            if not attacker.alive:
-                continue
-
-            target = choose_target(
-                attacker,
-                team_b
-            )
-
-            if target is None:
+    while turn < max_turns:
+        if turn % 2 == 0:
+            # A's turn to attack
+            if not any(u.alive for u in team_a) or not any(u.alive for u in team_b):
                 break
-
-            damage, hp_before = attack(
-                attacker,
-                target
-            )
-
-            # ZERO DAMAGE TRACKING
-            if damage == 0:
-
-                zero_damage_turns += 1
-
-            else:
-
-                zero_damage_turns = 0
-
+            pair = find_closest_pair(team_a, team_b)
+            if pair is None:
+                break
+            attacker, defender = pair
+            damage, hp_before = attack(attacker, defender)
             event = models.CombatEvent(
-
                 attacker_team="A",
                 attacker_name=attacker.unit.piece.name,
-
                 attacker_row=attacker.unit.position.row,
                 attacker_col=attacker.unit.position.col,
-
                 defender_team="B",
-                defender_name=target.unit.piece.name,
-
-                defender_row=target.unit.position.row,
-                defender_col=target.unit.position.col,
-
+                defender_name=defender.unit.piece.name,
+                defender_row=defender.unit.position.row,
+                defender_col=defender.unit.position.col,
                 damage=damage,
-
                 defender_hp_before=hp_before,
-                defender_hp_after=target.current_hp,
-
-                defender_dead=not target.alive,
-
-                turn=turn
+                defender_hp_after=defender.current_hp,
+                defender_dead=not defender.alive,
+                turn=turn // 2  # full turn number (each full turn = A and B attack)
             )
-
-            combat_log.append(
-                event
-            )
-
-        # TEAM B DEAD
-        if not any(u.alive for u in team_b):
-
-            return models.BattleResult(
-                winner="A",
-
-                remaining_hp_a=sum(
-                    u.current_hp
-                    for u in team_a
-                ),
-
-                remaining_hp_b=0,
-
-                turns=turn,
-
-                combat_log=combat_log
-            )
-
-        # TEAM B ATTACK
-        for attacker in team_b:
-
-            if not attacker.alive:
-                continue
-
-            target = choose_target(
-                attacker,
-                team_a
-            )
-
-            if target is None:
+            combat_log.append(event)
+        else:
+            # B's turn to attack
+            if not any(u.alive for u in team_a) or not any(u.alive for u in team_b):
                 break
-
-            damage, hp_before = attack(
-                attacker,
-                target
-            )
-
-            # ZERO DAMAGE TRACKING
-            if damage == 0:
-
-                zero_damage_turns += 1
-
-            else:
-
-                zero_damage_turns = 0
-
+            pair = find_closest_pair(team_b, team_a)
+            if pair is None:
+                break
+            attacker, defender = pair
+            damage, hp_before = attack(attacker, defender)
             event = models.CombatEvent(
-
                 attacker_team="B",
                 attacker_name=attacker.unit.piece.name,
-
                 attacker_row=attacker.unit.position.row,
                 attacker_col=attacker.unit.position.col,
-
                 defender_team="A",
-                defender_name=target.unit.piece.name,
-
-                defender_row=target.unit.position.row,
-                defender_col=target.unit.position.col,
-
+                defender_name=defender.unit.piece.name,
+                defender_row=defender.unit.position.row,
+                defender_col=defender.unit.position.col,
                 damage=damage,
-
                 defender_hp_before=hp_before,
-                defender_hp_after=target.current_hp,
-
-                defender_dead=not target.alive,
-
-                turn=turn
+                defender_hp_after=defender.current_hp,
+                defender_dead=not defender.alive,
+                turn=turn // 2
             )
-
-            combat_log.append(
-                event
-            )
-
-        # TEAM A DEAD
-        if not any(u.alive for u in team_a):
-
-            return models.BattleResult(
-                winner="B",
-
-                remaining_hp_a=0,
-
-                remaining_hp_b=sum(
-                    u.current_hp
-                    for u in team_b
-                ),
-
-                turns=turn,
-
-                combat_log=combat_log
-            )
-
-        # INFINITE BATTLE PROTECTION
-        # Only end battle if we had zero damage for ALL attacks in a turn
-        if zero_damage_turns >= 20:  # 6 units * ~3-4 turns of zero damage
-
-            return models.BattleResult(
-                winner="Draw",
-
-                remaining_hp_a=sum(
-                    u.current_hp
-                    for u in team_a
-                ),
-
-                remaining_hp_b=sum(
-                    u.current_hp
-                    for u in team_b
-                ),
-
-                turns=turn,
-
-                combat_log=combat_log
-            )
-
+            combat_log.append(event)
         turn += 1
 
-    # DRAW
+    # Determine winner
+    alive_a = [u for u in team_a if u.alive]
+    alive_b = [u for u in team_b if u.alive]
+    if not alive_a and not alive_b:
+        winner = "Draw"
+    elif not alive_a:
+        winner = "B"
+    elif not alive_b:
+        winner = "A"
+    else:
+        # Max turns reached
+        winner = "Draw"
+
+    remaining_hp_a = sum(u.current_hp for u in team_a)
+    remaining_hp_b = sum(u.current_hp for u in team_b)
+    total_turns = (turn + 1) // 2  # number of full turns completed
+
     return models.BattleResult(
-        winner="Draw",
-
-        remaining_hp_a=sum(
-            u.current_hp
-            for u in team_a
-        ),
-
-        remaining_hp_b=sum(
-            u.current_hp
-            for u in team_b
-        ),
-
-        turns=turn,
-
+        winner=winner,
+        remaining_hp_a=remaining_hp_a,
+        remaining_hp_b=remaining_hp_b,
+        turns=total_turns,
         combat_log=combat_log
     )

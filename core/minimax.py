@@ -19,21 +19,21 @@ def minimax(
     # Terminal state
     if depth == 0:
 
-        score = heuristic.evaluate_state(
+        score = heuristic.eval(
             my_formation,
             opponent_formation
         )
 
         return score, my_formation
 
+    # Generate formations for the side corresponding to the current player:
+    # maximizing=True -> we are the player (bottom side) -> top_side=False
+    # maximizing=False -> we are the opponent (top side) -> top_side=True
     all_formations = formation.generate_all_formations(
-        top_side=maximizing
+        top_side=not maximizing
     )
 
-    # LIMIT SEARCH SPACE
-    all_formations = all_formations[:120]
-
-    # MAX PLAYER
+    # MAX PLAYER (we are maximizing)
     if maximizing:
 
         best_score = float("-inf")
@@ -55,7 +55,7 @@ def minimax(
 
         return best_score, best_formation
 
-    # MIN PLAYER
+    # MIN PLAYER (opponent is minimizing)
     else:
 
         best_score = float("inf")

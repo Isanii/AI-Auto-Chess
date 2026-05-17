@@ -5,7 +5,6 @@ from . import constants
 from . import models
 from . import pieces
 
-MAX_FORMATIONS = 300
 def generate_random_formation(
     top_side: bool = True
 ) -> models.Formation:
@@ -50,7 +49,7 @@ def generate_random_formation(
 
 def generate_all_formations(
     top_side: bool = True,
-    limit: int = MAX_FORMATIONS
+    limit: int = 200
 ):
 
     if top_side:
@@ -68,41 +67,20 @@ def generate_all_formations(
 
     all_formations = []
 
-    attempts = 0
-
-    while len(all_formations) < limit:
-
-        attempts += 1
-
-        selected_positions = random.sample(
-            positions,
-            constants.TEAM_SIZE
-        )
-
-        formation_units = []
-
-        for row, col in selected_positions:
-
-            piece_name = random.choice(
-                piece_names
-            )
-
-            piece = pieces.create_piece(
-                piece_name
-            )
-
-            formation_units.append(
-                models.FormationUnit(
+    # Generate all combinations of 3 positions
+    for pos_combo in itertools.combinations(positions, constants.TEAM_SIZE):
+        # For each combination, assign pieces (with repetition)
+        for piece_combo in itertools.product(piece_names, repeat=constants.TEAM_SIZE):
+            formation_units = []
+            for (row, col), piece_name in zip(pos_combo, piece_combo):
+                piece = pieces.create_piece(piece_name)
+                unit = models.FormationUnit(
                     piece=piece,
-                    position=models.Position(
-                        row,
-                        col
-                    )
+                    position=models.Position(row, col)
                 )
-            )
-
-        all_formations.append(
-            formation_units
-        )
+                formation_units.append(unit)
+            all_formations.append(formation_units)
+            if limit is not None and len(all_formations) >= limit:
+                return all_formations
 
     return all_formations

@@ -170,7 +170,7 @@ class MinimaxDepth3Strategy(BaseStrategy):
         score, best_formation = alphabeta.alphabeta(
             my_formation=None,
             opponent_formation=opponent_formation,
-            depth=2,
+            depth=3,
             alpha=float("-inf"),
             beta=float("inf"),
             maximizing=True

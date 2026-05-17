@@ -170,28 +170,62 @@ def matchup_bonus(
 
     return bonus
 
+def eval(state_A, state_B):
+    """
+    Heuristic evaluation function as specified in requirements:
+    score = Σ(HP×ATK/DEF) of A − Σ(HP×ATK/DEF) of B
+    """
+
+    def calculate_unit_value(unit):
+        """Calculate HP × ATK / DEF for a single unit"""
+        piece = unit.piece
+        # Avoid division by zero - though DEF should never be 0 based on piece stats
+        defense = max(1, piece.defense)
+        return piece.hp * piece.atk / defense
+
+    # Calculate total value for state A
+    total_value_a = sum(
+        calculate_unit_value(unit)
+        for unit in state_A
+    )
+
+    # Calculate total value for state B
+    total_value_b = sum(
+        calculate_unit_value(unit)
+        for unit in state_B
+    )
+
+    # Return advantage of A over B
+    return total_value_a - total_value_b
+
+
 def evaluate_state(
     formation_a,
     formation_b
 ):
+    """
+    Heuristic evaluation function as specified in requirements:
+    score = Σ(HP×ATK/DEF) of A − Σ(HP×ATK/DEF) of B
+    """
 
-    score_a = evaluate_formation(
-        formation_a
+    def calculate_unit_value(unit):
+        """Calculate HP × ATK / DEF for a single unit"""
+        piece = unit.piece
+        # Avoid division by zero - though DEF should never be 0 based on piece stats
+        defense = max(1, piece.defense)
+        return piece.hp * piece.atk / defense
+
+    # Calculate total value for formation A
+    total_value_a = sum(
+        calculate_unit_value(unit)
+        for unit in formation_a
     )
 
-    score_b = evaluate_formation(
-        formation_b
+    # Calculate total value for formation B
+    total_value_b = sum(
+        calculate_unit_value(unit)
+        for unit in formation_b
     )
 
-    matchup = matchup_bonus(
-    formation_a,
-    formation_b
-    )
-
-    return (
-        score_a
-        -
-        score_b
-        +
-        matchup
-    )
+    # Return advantage of A over B
+    return total_value_a - total_value_b

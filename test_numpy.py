@@ -36,7 +36,7 @@ matchup = heuristic.matchup_bonus(formation, formation2)
 print("Matchup bonus:", matchup)
 
 # Test evaluate state
-state_score = heuristic.evaluate_state(formation, formation2)
+state_score = heuristic.eval(formation, formation2)
 print("Evaluate state score:", state_score)
 
 print("All tests passed!")

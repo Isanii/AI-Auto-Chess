@@ -17,7 +17,7 @@ def find_best_counter(
 
     for candidate in candidates:
 
-        score = heuristic.evaluate_state(
+        score = heuristic.eval(
             candidate,
             opponent_formation
         )

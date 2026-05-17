@@ -23,7 +23,7 @@ def alphabeta(
     # Terminal
     if depth == 0:
 
-        score = heuristic.evaluate_state(
+        score = heuristic.eval(
             my_formation,
             opponent_formation
         )
