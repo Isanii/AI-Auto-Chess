@@ -31,7 +31,7 @@ def alphabeta(
         return score, my_formation
 
     all_formations = formation.generate_all_formations(
-        top_side=maximizing
+        top_side=not maximizing
     )
 
     # LIMIT SEARCH

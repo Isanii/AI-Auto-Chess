@@ -135,11 +135,14 @@ class MinimaxDepth2Strategy(BaseStrategy):
                 top_side=not top_side
             )
         minimax.nodes_visited = 0
+        # maximizing=True means we are generating formations for our side (bottom).
+        # To generate formations for the side indicated by top_side, we set maximizing = not top_side
+        maximizing = not top_side
         score, best_formation = minimax.minimax(
             my_formation=None,
             opponent_formation=opponent_formation,
             depth=2,
-            maximizing=True
+            maximizing=maximizing
         )
 
         return best_formation
@@ -166,14 +169,16 @@ class MinimaxDepth3Strategy(BaseStrategy):
             opponent_formation = formation.generate_random_formation(
                 top_side=not top_side
             )
-
+        # maximizing=True means we are generating formations for our side (bottom).
+        # To generate formations for the side indicated by top_side, we set maximizing = not top_side
+        maximizing = not top_side
         score, best_formation = alphabeta.alphabeta(
             my_formation=None,
             opponent_formation=opponent_formation,
             depth=3,
             alpha=float("-inf"),
             beta=float("inf"),
-            maximizing=True
+            maximizing=maximizing
         )
 
         return best_formation
