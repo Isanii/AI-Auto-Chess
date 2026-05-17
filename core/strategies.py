@@ -6,7 +6,6 @@ from . import minimax
 from . import alphabeta
 
 
-
 class BaseStrategy:
 
     def __init__(self, name):
@@ -148,6 +147,7 @@ class MinimaxDepth2Strategy(BaseStrategy):
 
 # MINIMAX DEPTH 3
 class MinimaxDepth3Strategy(BaseStrategy):
+
     def __init__(self):
 
         super().__init__(
@@ -182,14 +182,9 @@ class MinimaxDepth3Strategy(BaseStrategy):
 def get_all_strategies():
 
     return [
-
         RandomStrategy(),
-
         GreedyHPStrategy(),
-
         GreedyATKStrategy(),
-
         MinimaxDepth2Strategy(),
-
         MinimaxDepth3Strategy()
     ]

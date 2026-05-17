@@ -1,3 +1,5 @@
+import numpy as np
+
 BOARD_SIZE = 4
 
 TEAM_SIZE = 3
@@ -5,7 +7,7 @@ TEAM_SIZE = 3
 MAX_TURNS = 100
 
 # GUI
-CELL_SIZE = 140
+CELL_SIZE = 120
 BOARD_PADDING = 50
 
 WINDOW_WIDTH = 1200
@@ -49,12 +51,12 @@ PIECE_STATS = {
 
 
 # Position bonus
-POSITION_BONUS = [
+POSITION_BONUS = np.array([
     [0, 1, 1, 0],
     [1, 2, 2, 1],
     [1, 2, 2, 1],
     [0, 1, 1, 0]
-]
+])
 
 
 # Heuristic weights
@@ -91,6 +93,7 @@ PIECE_COLORS = {
     "Tank": "#F39C12",
     "Assassin": "#E74C3C"
 }
+
 
 # Positioning preferences
 

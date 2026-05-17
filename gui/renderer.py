@@ -98,19 +98,19 @@ class BoardRenderer:
                 )
 
         # Draw Player and Enemy labels
-        label_y_top = offset_y - 20
-        label_y_bottom = offset_y + board_pixel_size + 20
+        label_y_top = offset_y - 40
+        label_y_bottom = offset_y + board_pixel_size + 40
         label_x = offset_x + board_pixel_size // 2
 
         self.canvas.create_text(
             label_x, label_y_top,
-            text="Enemy",
+            text="Kẻ thù",
             fill="#FF0000",
             font=("Arial", 16, "bold")
         )
         self.canvas.create_text(
             label_x, label_y_bottom,
-            text="Player",
+            text="Người chơi",
             fill="#00FF00",
             font=("Arial", 16, "bold")
         )
@@ -260,7 +260,7 @@ class BoardRenderer:
             label_color = "#00FF00" if team_name == "A" else "#FF0000"  # Green for Player, Red for Enemy
             self.canvas.create_text(
                 center_x,
-                center_y - radius - 10,
+                center_y - radius - 2,  # Move down slightly (less negative)
                 text=label_text,
                 fill=label_color,
                 font=("Arial", 9, "bold")
@@ -271,7 +271,7 @@ class BoardRenderer:
             hp_bar_height = 10
 
             hp_x = center_x - hp_bar_width // 2
-            hp_y = center_y + radius + 10
+            hp_y = center_y + radius - 5  # Moved up a bit more
 
             self.canvas.create_rectangle(
                 hp_x,
@@ -301,17 +301,9 @@ class BoardRenderer:
             # Text background (shadow effect)
             self.canvas.create_text(
                 center_x + 1,
-                center_y + radius + 31,
+                hp_y + hp_bar_height + 8,  # Positioned below the HP bar
                 text=hp_text,
                 fill="black",
-                font=("Arial", 10, "bold")
-            )
-            # Main text
-            self.canvas.create_text(
-                center_x,
-                center_y + radius + 30,
-                text=hp_text,
-                fill="white",
                 font=("Arial", 10, "bold")
             )
     def draw_damage_popup(

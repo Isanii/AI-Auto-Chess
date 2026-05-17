@@ -1,0 +1,1 @@
+- [Added numpy for matrix calculations in combat system](constants_ptr.md) — Updated constants.py to use numpy array for POSITION_BONUS and added numpy to requirements.txt

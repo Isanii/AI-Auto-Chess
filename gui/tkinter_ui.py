@@ -17,13 +17,12 @@ from gui.renderer import BoardRenderer
 import csv
 import matplotlib.pyplot as plt
 
-from core import tournament
 
 class AutoChessGUI:
 
     def __init__(self, root):
         self.current_log_index = 0
-        
+
         self.current_result = None
 
         self.replay_running = False
@@ -56,19 +55,72 @@ class AutoChessGUI:
             expand=True
         )
 
-        # LEFT
-        self.canvas = tk.Canvas(
+        # LEFT PANEL - BOARD AND LOG
+        self.left_panel = tk.Frame(
             self.main_frame,
             bg="#1E1E1E"
         )
 
-        self.canvas.pack(
+        self.left_panel.pack(
             side="left",
             fill="both",
             expand=True
         )
 
-        # RIGHT PANEL
+        # CANVAS FOR BOARD
+        self.canvas = tk.Canvas(
+            self.left_panel,
+            bg="#1E1E1E"
+        )
+
+        self.canvas.pack(
+            fill="both",
+            expand=True
+        )
+
+        self.renderer = BoardRenderer(
+            self.canvas
+        )
+
+        # RESULT TEXT (MOVED TO LEFT PANEL BELOW CANVAS)
+        log_frame = tk.Frame(
+            self.left_panel
+        )
+
+        log_frame.pack(
+            fill="both",
+            expand=False,
+            padx=10,
+            pady=10
+        )
+
+        scrollbar = tk.Scrollbar(
+            log_frame
+        )
+
+        scrollbar.pack(
+            side="right",
+            fill="y"
+        )
+
+        self.result_text = tk.Text(
+            log_frame,
+            height=8,
+            yscrollcommand=scrollbar.set,
+            wrap="word"
+        )
+
+        self.result_text.pack(
+            side="left",
+            fill="both",
+            expand=True
+        )
+
+        scrollbar.config(
+            command=self.result_text.yview
+        )
+
+        # RIGHT PANEL - CONTROLS
         self.right_panel = tk.Frame(
             self.main_frame,
             width=360,
@@ -82,9 +134,6 @@ class AutoChessGUI:
             fill="y"
         )
 
-        self.renderer = BoardRenderer(
-            self.canvas
-        )
         self.stats_label = tk.Label(
             self.right_panel,
             text="AI Stats",
@@ -249,50 +298,6 @@ class AutoChessGUI:
             fill="x",
             padx=20
         )
-        # RESULT
-        log_frame = tk.Frame(
-            self.right_panel
-        )
-
-        log_frame.pack(
-            fill="both",
-            expand=True,
-            padx=10,
-            pady=10
-        )
-
-        scrollbar = tk.Scrollbar(
-            log_frame
-        )
-
-        scrollbar.pack(
-            side="right",
-            fill="y"
-        )
-
-        self.result_text = tk.Text(
-            log_frame,
-            height=20,
-            yscrollcommand=scrollbar.set,
-            wrap="word"
-        )
-
-        self.result_text.pack(
-            side="left",
-            fill="both",
-            expand=True
-        )
-
-        scrollbar.config(
-            command=self.result_text.yview
-        )
-
-        self.result_text.pack(
-            fill="both",
-            expand=True,
-            padx=10,
-            pady=10
-        )
 
     def get_strategy_by_name(
         self,
@@ -342,6 +347,11 @@ class AutoChessGUI:
             self.strategy_b.get()
         )
 
+        # Reset counters before battle
+        minimax.nodes_visited = 0
+        alphabeta.nodes_visited = 0
+        alphabeta.branches_pruned = 0
+
         # Generate formations with proper positioning:
         # Strategy A (Player) at BOTTOM (rows 2-3)
         # Strategy B (Enemy) at TOP (rows 0-1)
@@ -352,9 +362,9 @@ class AutoChessGUI:
         )
 
         stats_text = (
-            f"Minimax Nodes: {minimax.nodes_visited}\n"
-            f"AlphaBeta Nodes: {alphabeta.nodes_visited}\n"
-            f"Branches Pruned: {alphabeta.branches_pruned}"
+            f"Nút Minimax: {minimax.nodes_visited}\n"
+            f"Nút AlphaBeta: {alphabeta.nodes_visited}\n"
+            f"Nhánh đã cắt: {alphabeta.branches_pruned}"
         )
 
         self.stats_label.config(
@@ -402,7 +412,6 @@ class AutoChessGUI:
         self.end_button.config(state="normal")
         self.replay_next_event()
 
-
     def replay_next_event(self):
         if self.paused:
             return
@@ -424,29 +433,29 @@ class AutoChessGUI:
             self.counter_button.config(
                 state="normal"
             )
-            
+
             self.tournament_button.config(
                 state="normal"
             )
 
             self.result_text.insert(
                 "end",
-                "\n=== BATTLE FINISHED ===\n"
+                "\n=== KẾT THỐC TRẬN ĐẤU ===\n"
             )
 
             self.result_text.insert(
                 "end",
-                f"Winner: "
+                f"Thắng: "
                 f"{self.current_result.winner}\n"
             )
 
             # Display winner on board
             if self.current_result.winner == "A":
-                winner_text = "Player Wins!"
+                winner_text = "Người chơi thắng!"
             elif self.current_result.winner == "B":
-                winner_text = "Enemy Wins!"
+                winner_text = "Kẻ thù thắng!"
             else:
-                winner_text = "Draw!"
+                winner_text = "Hòa!"
 
             self.renderer.draw_message(winner_text)
             self.replay_running = False
@@ -528,13 +537,13 @@ class AutoChessGUI:
         self.result_text.insert(
             "end",
 
-            f"Turn {event.turn} | "
+            f"Lượt {event.turn} | "
             f"{event.attacker_team} "
             f"{event.attacker_name}"
-            f" attacked "
+            f" tấn công "
             f"{event.defender_team} "
             f"{event.defender_name}"
-            f" | Damage={event.damage}"
+            f" | Sát thương={event.damage}"
             f" | HP="
             f"{event.defender_hp_before}"
             f"→"
@@ -615,18 +624,18 @@ class AutoChessGUI:
         # HEADER
         self.result_text.insert(
             "end",
-            "=== COUNTER PICK SIMULATION ===\n\n"
+            "=== MÔ PHẢN CHIẾN LƯƠNG PHỤ ===\n\n"
         )
 
         self.result_text.insert(
             "end",
-            f"Heuristic Advantage: {score:.2f}\n\n"
+            f"Lợi thế heuristic: {score:.2f}\n\n"
         )
 
         # ENEMY TEAM
         self.result_text.insert(
             "end",
-            "Enemy Team:\n"
+            "Đội Kẻ thù:\n"
         )
 
         for unit in enemy_formation:
@@ -639,7 +648,7 @@ class AutoChessGUI:
         # COUNTER TEAM
         self.result_text.insert(
             "end",
-            "\nCounter Team:\n"
+            "\nĐội Chiến Lượng Phụ:\n"
         )
 
         for unit in counter_formation:
@@ -652,7 +661,7 @@ class AutoChessGUI:
         # AI EXPLANATION
         self.result_text.insert(
             "end",
-            "\nAI Explanation:\n"
+            "\nGiải thích AI:\n"
         )
 
         reasons = explanation.explain_formation(
@@ -669,8 +678,13 @@ class AutoChessGUI:
         # START SIMULATION
         self.result_text.insert(
             "end",
-            "\n=== SIMULATION START ===\n\n"
+            "\n=== BẮT ĐẦU MÔ PHẢN ===\n\n"
         )
+
+        # Reset counters before battle
+        minimax.nodes_visited = 0
+        alphabeta.nodes_visited = 0
+        alphabeta.branches_pruned = 0
 
         # RUN BATTLE
         self.current_result = combat.simulate_battle(
@@ -703,7 +717,7 @@ class AutoChessGUI:
 
         self.result_text.insert(
             "end",
-            "=== RUNNING TOURNAMENT ===\n\n"
+            "=== ĐANG CHẠY GIẢI ĐẤU ===\n\n"
         )
 
         # Get all strategies
@@ -732,11 +746,11 @@ class AutoChessGUI:
         # Start the first match
         self.result_text.insert(
             "end",
-            f"Total matches to play: {len(self.tournament_matches)}\n"
+            f"Tổng số trận đấu: {len(self.tournament_matches)}\n"
         )
         self.result_text.insert(
             "end",
-            "Starting first match...\n\n"
+            "Bắt đầu trận đầu tiên...\n\n"
         )
 
         # Begin tournament match replay
@@ -767,20 +781,21 @@ class AutoChessGUI:
         )
 
         plt.title(
-            "Tournament Wins"
+            "Thắng Giải Đấu"
         )
 
         plt.xlabel(
-            "Strategies"
+            "Chiến lược"
         )
 
         plt.ylabel(
-            "Wins"
+            "Thắng"
         )
 
         plt.tight_layout()
 
         plt.show()
+
     def run_next_tournament_match(self):
 
         if (
@@ -800,7 +815,7 @@ class AutoChessGUI:
 
         self.result_text.insert(
             "end",
-            f"\n=== MATCH "
+            f"\n=== TRẬN ĐẤU "
             f"{self.current_match_index + 1} ===\n"
         )
 
@@ -844,6 +859,11 @@ class AutoChessGUI:
             "B"
         )
 
+        # Reset counters before battle
+        minimax.nodes_visited = 0
+        alphabeta.nodes_visited = 0
+        alphabeta.branches_pruned = 0
+
         # SIMULATE
         self.current_result = combat.simulate_battle(
             formation_a,
@@ -858,7 +878,8 @@ class AutoChessGUI:
         self.current_strategy_b = strategy_b
 
         self.replay_next_tournament_event()
-    
+
+
     def replay_next_tournament_event(self):
         if self.paused:
             return
@@ -905,16 +926,16 @@ class AutoChessGUI:
 
             self.result_text.insert(
                 "end",
-                f"Winner: {winner}\n"
+                f"Thắng: {winner}\n"
             )
 
             # Display winner on board for tournament match
             if winner == "A":
-                winner_text = f"{self.current_strategy_a.name} Wins!"
+                winner_text = f"{self.current_strategy_a.name} Thắng!"
             elif winner == "B":
-                winner_text = f"{self.current_strategy_b.name} Wins!"
+                winner_text = f"{self.current_strategy_b.name} Thắng!"
             else:
-                winner_text = "Draw!"
+                winner_text = "Hòa!"
 
             self.renderer.draw_message(winner_text)
 
@@ -1006,11 +1027,12 @@ class AutoChessGUI:
             self.replay_speed,
             self.replay_next_tournament_event
         )
+
     def show_final_tournament_results(self):
 
         self.result_text.insert(
             "end",
-            "\n=== FINAL STANDINGS ===\n\n"
+            "\n=== BẢNG XẾP HẠNG CUỐI CÙNG ===\n\n"
         )
 
         sorted_standings = sorted(
@@ -1029,9 +1051,9 @@ class AutoChessGUI:
 
                 f"{rank}. "
                 f"{name}"
-                f" | W={stats['wins']}"
-                f" L={stats['losses']}"
-                f" D={stats['draws']}\n"
+                f" | Thắng={stats['wins']}"
+                f" Thua={stats['losses']}"
+                f" Hòa={stats['draws']}\n"
             )
 
         self.show_tournament_chart(
@@ -1055,13 +1077,13 @@ class AutoChessGUI:
         if self.paused:
 
             self.pause_button.config(
-                text="RESUME"
+                text="TIẾP TỤC TRẬN ĐẤU"
             )
 
         else:
 
             self.pause_button.config(
-                text="PAUSE"
+                text="TẠM DỪNG TRẬN ĐẤU"
             )
 
             if self.replay_running:
@@ -1081,7 +1103,7 @@ class AutoChessGUI:
         # Reset button states
         self.start_button.config(state="normal")
         self.counter_button.config(state="normal")
-        self.pause_button.config(text="PAUSE")
+        self.pause_button.config(text="TẠM DỪNG TRẬN ĐẤU")
         self.end_button.config(state="disabled")
 
         # Clear units but keep board
@@ -1089,140 +1111,14 @@ class AutoChessGUI:
         self.enemy_team = []
         self.renderer.draw_board()
 
-        # Redraw labels
-        canvas_width = self.canvas.winfo_width()
-        canvas_height = self.canvas.winfo_height()
-
-        board_pixel_size = (
-            constants.BOARD_SIZE
-            *
-            constants.CELL_SIZE
-        )
-
-        offset_x = (
-            canvas_width - board_pixel_size
-        ) // 2
-
-        offset_y = (
-            canvas_height - board_pixel_size
-        ) // 2
-
-        # Draw Player and Enemy labels
-        label_y_top = offset_y - 20
-        label_y_bottom = offset_y + board_pixel_size + 20
-        label_x = offset_x + board_pixel_size // 2
-
-        self.canvas.create_text(
-            label_x, label_y_top,
-            text="Enemy",
-            fill="white",
-            font=("Arial", 16, "bold")
-        )
-        self.canvas.create_text(
-            label_x, label_y_bottom,
-            text="Player",
-            fill="white",
-            font=("Arial", 16, "bold")
-        )
-
         # Clear any ongoing replay
-        self.result_text.insert("end", "\n=== BATTLE ENDED ===\n")
+        self.result_text.insert("end", "\n=== KẾT THÚC TRẬN ĐẤU ===\n")
         self.tournament_button.config(
             state="normal"
         )
-    def export_tournament_results(
-        self,
-        standings
-    ):
 
-        with open(
-            "tournament_results.csv",
-            "w",
-            newline=""
-        ) as file:
 
-            writer = csv.writer(file)
-
-            writer.writerow(
-                [
-                    "Strategy",
-                    "Wins",
-                    "Losses",
-                    "Draws",
-                    "AvgTurns"
-                ]
-            )
-
-            for name, stats in standings:
-
-                total_matches = (
-                    stats["wins"]
-                    +
-                    stats["losses"]
-                    +
-                    stats["draws"]
-                )
-
-                avg_turns = (
-                    stats["total_turns"]
-                    /
-                    max(1, total_matches)
-                )
-
-                writer.writerow(
-                    [
-                        name,
-                        stats["wins"],
-                        stats["losses"],
-                        stats["draws"],
-                        round(avg_turns, 2)
-                    ]
-                )
-    def show_tournament_chart(
-        self,
-        standings
-    ):
-
-        names = [
-            name
-            for name, _ in standings
-        ]
-
-        wins = [
-            stats["wins"]
-            for _, stats in standings
-        ]
-
-        plt.figure(
-            figsize=(8, 5)
-        )
-
-        plt.bar(
-            names,
-            wins
-        )
-
-        plt.title(
-            "Tournament Wins"
-        )
-
-        plt.xlabel(
-            "Strategies"
-        )
-
-        plt.ylabel(
-            "Wins"
-        )
-
-        plt.tight_layout()
-
-        plt.show()
 def main():
-
     root = tk.Tk()
-
-    app = AutoChessGUI(
-        root
-    )
-
+    app = AutoChessGUI(root)
     root.mainloop()
