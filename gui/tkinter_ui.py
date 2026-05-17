@@ -343,11 +343,9 @@ class AutoChessGUI:
         )
 
         formation_a = strategy_a.choose_formation()
-
         formation_b = strategy_b.choose_formation(
             formation_a
         )
-
 
         stats_text = (
             f"Minimax Nodes: {minimax.nodes_visited}\n"
@@ -359,7 +357,7 @@ class AutoChessGUI:
             text=stats_text
         )
 
-        # CREATE BATTLE TEAMS
+        # CREATE BATTLE TEAMS - strategy_a (Player) at bottom, strategy_b (Enemy) at top
         self.player_team = combat.create_battle_team(
             formation_a
         )
@@ -564,12 +562,12 @@ class AutoChessGUI:
             "end"
         )
 
-        # GENERATE ENEMY FORMATION
+        # GENERATE ENEMY FORMATION (placed at TOP)
         enemy_formation = formation.generate_random_formation(
-            top_side=False
+            top_side=True  # Enemy at top (rows 0-1)
         )
 
-        # FIND BEST COUNTER
+        # FIND BEST COUNTER (placed at BOTTOM)
         counter_formation, score = (
             counter_picker.find_best_counter(
                 enemy_formation
@@ -578,11 +576,11 @@ class AutoChessGUI:
 
         # CREATE BATTLE TEAMS
         self.player_team = combat.create_battle_team(
-            counter_formation
+            counter_formation  # Player gets the counter formation (bottom)
         )
 
         self.enemy_team = combat.create_battle_team(
-            enemy_formation
+            enemy_formation    # Enemy gets the random formation (top)
         )
 
         # DRAW BOARD

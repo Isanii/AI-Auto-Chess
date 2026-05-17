@@ -1,0 +1,57 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Build / cache
+build/
+dist/
+*.egg-info/
+
+# PyInstaller
+*.spec
+
+# Environment variables
+.env
+
+# Local database
+*.db
+*.sqlite3
+
+# Tournament export
+tournament_results.csv
+
+# Temporary files
+temp/
+tmp/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Matplotlib cache
+.matplotlib/
+
+# Coverage
+.coverage
+htmlcov/
+
+# pytest
+.pytest_cache/
