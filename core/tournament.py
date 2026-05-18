@@ -1,5 +1,8 @@
 from . import combat
 from . import strategies
+from . import constants
+import numpy as np
+import copy
 
 
 def run_match(
@@ -25,6 +28,24 @@ def run_match(
 
 
 def run_tournament():
+
+    # Override constants for 5x5 board in tournament mode
+    _ORIGINAL_BOARD_SIZE = constants.BOARD_SIZE
+    _ORIGINAL_POSITION_BONUS = constants.POSITION_BONUS.copy()
+    _ORIGINAL_FRONTLINE_ROWS = constants.FRONTLINE_ROWS.copy()
+    _ORIGINAL_BACKLINE_ROWS = constants.BACKLINE_ROWS.copy()
+
+    # Set 5x5 board specifications for tournament
+    constants.BOARD_SIZE = 5
+    constants.POSITION_BONUS = np.array([
+        [0, 1, 1, 1, 0],
+        [1, 2, 2, 2, 1],
+        [1, 2, 3, 2, 1],
+        [1, 2, 2, 2, 1],
+        [0, 1, 1, 1, 0]
+    ])
+    constants.FRONTLINE_ROWS = [0, 1]  # First 2 rows
+    constants.BACKLINE_ROWS = [3, 4]   # Last 2 rows (for 5x5: rows 3,4)
 
     all_strategies = strategies.get_all_strategies()
 
@@ -129,6 +150,12 @@ def run_tournament():
         matrix.append(
             row
         )
+
+    # Restore original constants
+    constants.BOARD_SIZE = _ORIGINAL_BOARD_SIZE
+    constants.POSITION_BONUS = _ORIGINAL_POSITION_BONUS
+    constants.FRONTLINE_ROWS = _ORIGINAL_FRONTLINE_ROWS
+    constants.BACKLINE_ROWS = _ORIGINAL_BACKLINE_ROWS
 
     return (
         all_strategies,

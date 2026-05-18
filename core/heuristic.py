@@ -32,7 +32,7 @@ def calculate_unit_power(
     # FRONTLINE
     if role == "front":
 
-        if unit.position.row in [0, 1]:
+        if unit.position.row in constants.FRONTLINE_ROWS:
 
             score += 8
 
@@ -43,7 +43,7 @@ def calculate_unit_power(
     # BACKLINE
     elif role == "back":
 
-        if unit.position.row in [2, 3]:
+        if unit.position.row in constants.BACKLINE_ROWS:
 
             score += 8
 

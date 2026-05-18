@@ -12,7 +12,7 @@ def generate_random_formation(
     if top_side:
         valid_rows = [0, 1]
     else:
-        valid_rows = [2, 3]
+        valid_rows = [constants.BOARD_SIZE-2, constants.BOARD_SIZE-1]
 
     positions = [
         (r, c)
@@ -55,7 +55,7 @@ def generate_all_formations(
     if top_side:
         valid_rows = [0, 1]
     else:
-        valid_rows = [2, 3]
+        valid_rows = [constants.BOARD_SIZE-2, constants.BOARD_SIZE-1]
 
     positions = [
         (r, c)
