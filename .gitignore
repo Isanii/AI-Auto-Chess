@@ -36,9 +36,6 @@ dist/
 *.db
 *.sqlite3
 
-# Tournament export
-tournament_results.csv
-
 # Temporary files
 temp/
 tmp/
