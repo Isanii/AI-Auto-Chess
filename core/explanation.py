@@ -13,35 +13,35 @@ def explain_formation(
     if "Tank" in names:
 
         lines.append(
-            "- Frontline protection with Tank"
+            "- Bảo vệ tuyến trước bằng Tank"
         )
 
     # Assassin
     if "Assassin" in names:
 
         lines.append(
-            "- Assassin can eliminate squishy targets"
+            "- Assassin có thể tiêu diệt mục tiêu mỏng manh"
         )
 
     # Mage
     if "Mage" in names:
 
         lines.append(
-            "- Mage provides high burst damage"
+            "- Mage cung cấp sát thương burst cao"
         )
 
     # Archer
     if "Archer" in names:
 
         lines.append(
-            "- Archer provides balanced ranged DPS"
+            "- Archer cung cấp DPS tầm xa cân bằng"
         )
 
     # Warrior
     if "Warrior" in names:
 
         lines.append(
-            "- Warrior adds survivability"
+            "- Warrior tăng khả năng sinh tồn"
         )
 
     # Diversity
@@ -52,7 +52,7 @@ def explain_formation(
     if unique_types >= 3:
 
         lines.append(
-            "- Balanced team composition"
+            "- Thành phần đội cân bằng"
         )
 
     return lines

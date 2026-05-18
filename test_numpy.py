@@ -14,21 +14,21 @@ unit3 = models.FormationUnit(piece=piece_archer, position=models.Position(1, 0))
 
 formation = [unit1, unit2, unit3]
 
-print("Testing constants.POSITION_BONUS type:", type(constants.POSITION_BONUS))
-print("POSITION_BONUS:\n", constants.POSITION_BONUS)
+print("Kiểm tra kiểu dữ liệu của constants.POSITION_BONUS:", type(constants.POSITION_BONUS))
+print("MA TRẬN POSITION_BONUS:\n", constants.POSITION_BONUS)
 
 # Test heuristic
 score = heuristic.evaluate_formation(formation)
-print("Formation score:", score)
-print("Type of score:", type(score))
+print("Điểm số của đội hình:", score)
+print("Kiểu dữ liệu của điểm số:", type(score))
 
 # Test formation spread bonus
 spread = heuristic.formation_spread_bonus(formation)
-print("Spread bonus:", spread)
+print("Bonus lan tỏa:", spread)
 
 # Test team balance bonus
 balance = heuristic.team_balance_bonus(formation)
-print("Balance bonus:", balance)
+print("Bonus cân bằng đội:", balance)
 
 # Test matchup bonus
 formation2 = [unit1, unit2, unit3]  # same

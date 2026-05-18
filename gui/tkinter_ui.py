@@ -38,7 +38,7 @@ class AutoChessGUI:
 
         self.paused = False
         self.root.title(
-            "AI Auto-Chess Simulator"
+            "Mô phỏng Auto-Chess AI"
         )
 
         self.root.state(
@@ -136,7 +136,7 @@ class AutoChessGUI:
 
         self.stats_label = tk.Label(
             self.right_panel,
-            text="AI Stats",
+            text="Thống kê AI",
             justify="left",
             anchor="w",
             font=("Consolas", 10),
@@ -159,7 +159,7 @@ class AutoChessGUI:
 
         title = tk.Label(
             self.right_panel,
-            text="AI AUTO-CHESS",
+            text="AUTO-CHESS AI",
             font=("Arial", 18, "bold")
         )
 
@@ -170,7 +170,7 @@ class AutoChessGUI:
         # STRATEGY A
         tk.Label(
             self.right_panel,
-            text="Strategy A"
+            text="Chiến lược A"
         ).pack()
 
         self.strategy_a = ttk.Combobox(
@@ -193,7 +193,7 @@ class AutoChessGUI:
         # STRATEGY B
         tk.Label(
             self.right_panel,
-            text="Strategy B"
+            text="Chiến lược B"
         ).pack()
 
         self.strategy_b = ttk.Combobox(
@@ -216,7 +216,7 @@ class AutoChessGUI:
         # BUTTON
         self.start_button = tk.Button(
             self.right_panel,
-            text="START BATTLE",
+            text="BẮT ĐẦU TRẬN ĐẤU",
             command=self.start_battle,
             height=2
         )
@@ -229,7 +229,7 @@ class AutoChessGUI:
 
         self.counter_button = tk.Button(
             self.right_panel,
-            text="COUNTER PICK",
+            text=" CHIẾN LƯỢNG PHỤ ",
             command=self.run_counter_pick,
             height=2
         )
@@ -242,7 +242,7 @@ class AutoChessGUI:
 
         self.tournament_button = tk.Button(
             self.right_panel,
-            text="RUN TOURNAMENT",
+            text="CHẠY GIẢI ĐẤU",
             command=self.run_tournament,
             height=2
         )
@@ -255,7 +255,7 @@ class AutoChessGUI:
 
         self.pause_button = tk.Button(
             self.right_panel,
-            text="PAUSE",
+            text="TẠM DỪNG",
             command=self.toggle_pause
         )
 
@@ -267,7 +267,7 @@ class AutoChessGUI:
 
         self.end_button = tk.Button(
             self.right_panel,
-            text="END BATTLE",
+            text="KẾT THÚC TRẬN ĐẤU",
             command=self.end_battle,
             height=2,
             bg="#ff6b6b",
@@ -440,7 +440,7 @@ class AutoChessGUI:
 
             self.result_text.insert(
                 "end",
-                "\n=== KẾT THỐC TRẬN ĐẤU ===\n"
+                "\n=== KẾT THÚC TRẬN ĐẤU ===\n"
             )
 
             self.result_text.insert(
@@ -534,14 +534,17 @@ class AutoChessGUI:
             event.damage
         )
         # COMBAT LOG
+        attacker_team_text = "Người chơi" if event.attacker_team == "A" else "Kẻ thù"
+        defender_team_text = "Người chơi" if event.defender_team == "A" else "Kẻ thù"
+
         self.result_text.insert(
             "end",
 
             f"Lượt {event.turn} | "
-            f"{event.attacker_team} "
+            f"{attacker_team_text} "
             f"{event.attacker_name}"
             f" tấn công "
-            f"{event.defender_team} "
+            f"{defender_team_text} "
             f"{event.defender_name}"
             f" | Sát thương={event.damage}"
             f" | HP="

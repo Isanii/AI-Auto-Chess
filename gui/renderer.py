@@ -255,9 +255,9 @@ class BoardRenderer:
                     fill="white"
                 )
 
-            # PLAYER/ENEMY LABEL
-            label_text = "Player" if team_name == "A" else "Enemy"
-            label_color = "#00FF00" if team_name == "A" else "#FF0000"  # Green for Player, Red for Enemy
+            # NHÃN NGƯỜI CHƠI/KẺ THỤ
+            label_text = "Người chơi" if team_name == "A" else "Kẻ thù"
+            label_color = "#00FF00" if team_name == "A" else "#FF0000"  # Xanh lá cho Người chơi, Đỏ cho Kẻ thù
             self.canvas.create_text(
                 center_x,
                 center_y - radius - 2,  # Move down slightly (less negative)

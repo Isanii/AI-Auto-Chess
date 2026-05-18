@@ -8,7 +8,7 @@ def calculate_unit_power(
 
     piece = unit.piece
 
-    # BASE STATS
+    # CHỈ SỐ CƠ BẢN
     score = (
         piece.hp * 1.2
         +
@@ -17,19 +17,19 @@ def calculate_unit_power(
         piece.defense * 1.5
     )
 
-    # POSITION BONUS
+    # THỂ TÍCH VỊ TRÍ
     score += constants.POSITION_BONUS[
         unit.position.row
     ][
         unit.position.col
     ] * 2
 
-    # ROLE POSITION BONUS
+    # THỂ TÍCH VAI TRÒ VỊ TRÍ
     role = constants.ROLE_PREFERENCE[
         piece.name
     ]
 
-    # FRONTLINE
+    # TIẾN ĐỨI
     if role == "front":
 
         if unit.position.row in constants.FRONTLINE_ROWS:
@@ -40,7 +40,7 @@ def calculate_unit_power(
 
             score -= 5
 
-    # BACKLINE
+    # HẬU ĐỨI
     elif role == "back":
 
         if unit.position.row in constants.BACKLINE_ROWS:

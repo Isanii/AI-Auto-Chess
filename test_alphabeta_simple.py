@@ -7,8 +7,8 @@ from core import minimax
 from core import alphabeta
 
 def run_minimax(my_formation, opponent_formation, depth, maximizing=True):
-    """Run minimax and return score, formation, nodes visited"""
-    # Reset counter
+    """Chạy minimax và trả về điểm số, đội hình, số nút đã thăm"""
+    # Đặt lại bộ đếm
     minimax.nodes_visited = 0
     start_time = time.time()
     score, best_formation = minimax.minimax(
@@ -18,8 +18,8 @@ def run_minimax(my_formation, opponent_formation, depth, maximizing=True):
     return score, best_formation, minimax.nodes_visited, end_time - start_time
 
 def run_alphabeta(my_formation, opponent_formation, depth, maximizing=True):
-    """Run alpha-beta and return score, formation, nodes visited, branches pruned"""
-    # Reset counters
+    """Chạy alpha-beta và trả về điểm số, đội hình, số nút đã thăm, số nhánh đã cắt"""
+    # Đặt lại các bộ đếm
     alphabeta.nodes_visited = 0
     alphabeta.branches_pruned = 0
     start_time = time.time()
@@ -37,36 +37,36 @@ def print_formation(formation, label):
     print()
 
 def main():
-    print("Alpha-Beta Pruning vs Minimax Comparison")
+    print("So sánh Alpha-Beta Pruning vs Minimax")
     print("=" * 50)
 
-    # Use a fixed opponent formation for consistent testing
+    # Sử dụng đội hình đối thủ cố định để kiểm tra nhất quán
     opponent_formation = [
         models.FormationUnit(piece=pieces.create_piece("Tank"), position=models.Position(3, 0)),
         models.FormationUnit(piece=pieces.create_piece("Mage"), position=models.Position(2, 1)),
         models.FormationUnit(piece=pieces.create_piece("Assassin"), position=models.Position(2, 2))
     ]
 
-    print("Opponent formation:")
-    print_formation(opponent_formation, "Opponent (Top Side)")
+    print("Đội hình Kẻ thù:")
+    print_formation(opponent_formation, "Kẻ thù (Bên trên)")
 
-    # Test depths 2 and 3
+    # Kiểm tra độ sâu 2 và 3
     for depth in [2, 3]:
-        print("\n--- Depth {} ---".format(depth))
+        print("\n--- Độ sâu {} ---".format(depth))
 
-        # Run Minimax
-        print("Running Minimax...")
+        # Chạy Minimax
+        print("Đang chạy Minimax...")
         score_min, form_min, nodes_min, time_min = run_minimax(
             None, opponent_formation, depth, maximizing=True
         )
 
-        # Run Alpha-Beta
-        print("Running Alpha-Beta...")
+        # Chạy Alpha-Beta
+        print("Đang chạy Alpha-Beta...")
         score_ab, form_ab, nodes_ab, branches_ab, time_ab = run_alphabeta(
             None, opponent_formation, depth, maximizing=True
         )
 
-        # Calculate savings
+        # Tính toán tiết kiệm
         if nodes_min > 0:
             reduction_pct = (1 - nodes_ab / nodes_min) * 100
         else:
@@ -74,22 +74,22 @@ def main():
 
         time_saving = (1 - time_ab / time_min) * 100 if time_min > 0 else 0
 
-        print("\nResults:")
-        print("  Minimax:      Score={:.2f}, Nodes={}, Time={:.4f}s".format(score_min, nodes_min, time_min))
-        print("  Alpha-Beta:   Score={:.2f}, Nodes={}, Branches Pruned={}, Time={:.4f}s".format(score_ab, nodes_ab, branches_ab, time_ab))
-        print("  Improvement:  Nodes reduced by {:.1f}%, Time saved by {:.1f}%".format(reduction_pct, time_saving))
+        print("\nKết quả:")
+        print("  Minimax:      Điểm={:.2f}, Nút={}, Thời gian={:.4f}s".format(score_min, nodes_min, time_min))
+        print("  Alpha-Beta:   Điểm={:.2f}, Nút={}, Nhánh đã cắt={}, Thời gian={:.4f}s".format(score_ab, nodes_ab, branches_ab, time_ab))
+        print("  Cải thiện:    Giảm nút {:.1f}%, Tiết kiệm thời gian {:.1f}%".format(reduction_pct, time_saving))
 
-        # Verify scores match (they should with perfect play)
+        # Kiểm tra điểm số có khớp nhau không (nên có với chơi hoàn hảo)
         if abs(score_min - score_ab) < 0.01:
-            print("  Scores match")
+            print("  Điểm số khớp")
         else:
-            print("  Scores differ by {:.2f}".format(abs(score_min - score_ab)))
+            print("  Điểm số chênh lệch {:.2f}".format(abs(score_min - score_ab)))
 
-        # Show AI formations
-        print("\n  Minimax AI formation:")
+        # Hiển thị đội hình AI
+        print("\n  Đội hình AI Minimax:")
         print_formation(form_min, "")
 
-        print("  Alpha-Beta AI formation:")
+        print("  Đội hình AI Alpha-Beta:")
         print_formation(form_ab, "")
 
 if __name__ == "__main__":

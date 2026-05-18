@@ -55,51 +55,60 @@ def test_team(team_name, piece_names):
         constants.PIECE_STATS = original_piece_stats
 
 def main():
-    print("Testing Minimax depth=2 with different team compositions")
+    print("Kiểm tra Minimax depth=2")
 
-    # Define 3 different teams of 5 pieces each
-    # (Note: There are only 5 total piece types in the game, so each team will be all pieces)
-    # But we can test different combinations by emphasizing different pieces
-
-    # Since there are exactly 5 piece types, each "team of 5 pieces" will actually be all pieces
-    # But we can test what happens when we limit to subsets if we had more pieces
-    # For now, let's just test the full set and see what formations emerge
-
-    teams = [
-        ("Balanced Team", ["Warrior", "Mage", "Archer", "Tank", "Assassin"]),
-        ("Attack Heavy", ["Warrior", "Mage", "Archer", "Assassin", "Assassin"]),  # Duplicate to test
-        ("Defense Heavy", ["Warrior", "Tank", "Tank", "Archer", "Mage"]),
+    # Kiểm tra với 3 hình thức đội hình đối thủ khác nhau như trong ví dụ Test Counter-Picking
+    test_cases = [
+        ("Test 1 - Tank/Mage/Assassin", [
+            models.FormationUnit(piece=pieces.create_piece("Tank"), position=models.Position(3, 0)),
+            models.FormationUnit(piece=pieces.create_piece("Mage"), position=models.Position(2, 1)),
+            models.FormationUnit(piece=pieces.create_piece("Assassin"), position=models.Position(2, 2))
+        ]),
+        ("Test 2 - Warrior/Archer/Tank", [
+            models.FormationUnit(piece=pieces.create_piece("Warrior"), position=models.Position(3, 0)),
+            models.FormationUnit(piece=pieces.create_piece("Archer"), position=models.Position(2, 1)),
+            models.FormationUnit(piece=pieces.create_piece("Tank"), position=models.Position(2, 2))
+        ]),
+        ("Test 3 - Mage/Assassin/Archer", [
+            models.FormationUnit(piece=pieces.create_piece("Mage"), position=models.Position(3, 0)),
+            models.FormationUnit(piece=pieces.create_piece("Assassin"), position=models.Position(2, 1)),
+            models.FormationUnit(piece=pieces.create_piece("Archer"), position=models.Position(2, 2))
+        ])
     ]
 
-    # Actually, let's just test with the full set since we only have 5 pieces total
-    # The duplicates above won't work as expected since PIECE_STATS keys must be unique
+    strategy = MinimaxDepth2Strategy()
 
-    teams = [
-        ("Full Set (All pieces)", ["Warrior", "Mage", "Archer", "Tank", "Assassin"]),
-    ]
+    for test_name, opponent_formation in test_cases:
+        print(f"\n{test_name}")
+        print("-" * 40)
 
-    # But to satisfy the requirement of "3 bộ 5 quân bài khác nhau" (3 different sets of 5 pieces),
-    # let's create some variations by adjusting what we consider "available"
-    # Even though we only have 5 pieces, we can test different scenarios
+        # Thiết lập hạt cho khả năng tái tạo (sử dụng hash đơn giản của test_name)
+        seed = hash(test_name) % 1000
+        random.seed(seed)
+        ai_formation = strategy.choose_formation(opponent_formation=opponent_formation, top_side=True)
 
-    test_scenarios = [
-        ("Standard Game", ["Warrior", "Mage", "Archer", "Tank", "Assassin"]),
-        ("No Assassins", ["Warrior", "Mage", "Archer", "Tank"]),  # Only 4 pieces - let's see
-        ("Warrior Focus", ["Warrior", "Warrior", "Mage", "Archer", "Tank"]),  # This won't work either
-    ]
+        # Hiển thị đội hình đối phương
+        print("Đội hình Kẻ thù (Bên trên):")
+        for i, unit in enumerate(opponent_formation):
+            print(f"  {i+1}. {unit.piece.name} at ({unit.position.row}, {unit.position.col})")
+        print()
 
-    # Actually, let me think differently. The requirement might mean:
-    # Test with 3 different enemy team compositions, each consisting of 5 pieces
-    # Since we only have 5 piece types, each enemy team would be using all 5 types
+        # Hiển thị đề xuất của AI
+        print("Đề xuất của AI (Minimax depth=2) (Bên dưới):")
+        for i, unit in enumerate(ai_formation):
+            print(f"  {i+1}. {unit.piece.name} at ({unit.position.row}, {unit.position.col})")
+        print()
 
-    # Let's just run the test with the full set a few times to see variability
-    print("\nNote: There are exactly 5 piece types in the game.")
-    print("Each 'team of 5 pieces' will necessarily include all piece types.")
-    print("Running multiple tests to see variation in AI recommendations...\n")
+        # Tính và hiển thị điểm số heuristic
+        score = heuristic.eval(ai_formation, opponent_formation)
+        print(f"Điểm số heuristic (lợi thế của AI): {score:.2f}")
+        print("(Điểm số dương có nghĩa là AI có lợi thế)")
 
-    for i in range(3):
-        team_name = f"Test Run {i+1}"
-        test_team(team_name, ["Warrior", "Mage", "Archer", "Tank", "Assassin"])
+        # Hiển thị cũng những quân được sử dụng
+        ai_pieces = [unit.piece.name for unit in ai_formation]
+        opp_pieces = [unit.piece.name for unit in opponent_formation]
+        print(f"AI sử dụng: {', '.join(ai_pieces)}")
+        print(f"Kẻ thù sử dụng: {', '.join(opp_pieces)}")
 
 if __name__ == "__main__":
     main()

@@ -5,16 +5,16 @@ from core.tournament import run_tournament
 
 def print_standings(strategies, standings, matrix):
     print("\n" + "="*60)
-    print("TOURNAMENT RESULTS")
+    print("KẾT QUẢ GIẢI ĐẤU")
     print("="*60)
 
-    # Print strategy names for reference
-    print("\nStrategies:")
+    # In tên chiến lược để tham khảo
+    print("\nChiến lược:")
     for i, strategy in enumerate(strategies):
         print("  {}: {}".format(i, strategy.name))
 
-    # Print win/loss/draw matrix
-    print("\nMatch Results Matrix (Row vs Column):")
+    # In ma trận kết quả win/loss/draw
+    print("\nMa trận kết quả trận đấu (Hàng vs Cột):")
     print("     ", end="")
     for strategy in strategies:
         print("{:>8}".format(strategy.name), end="")
@@ -26,13 +26,13 @@ def print_standings(strategies, standings, matrix):
             print("{:>8}".format(result), end="")
         print()
 
-    # Calculate win rates and print standings
-    print("\nStandings (sorted by win rate):")
+    # Tính tỷ lệ thắng và in bảng xếp hạng
+    print("\nBảng xếp hạng (sắp xếp theo tỷ lệ thắng):")
     print("-"*60)
-    print("{:<15} {:<3} {:<3} {:<3} {:<6} {:<8} {:<9}".format('Strategy', 'W', 'L', 'D', 'Win%', 'Avg HP', 'Avg Turns'))
+    print("{:<15} {:<3} {:<3} {:<3} {:<6} {:<8} {:<9}".format('Chiến lược', 'W', 'L', 'D', 'Tỷ lệ%', 'HPTB', 'LượtTB'))
     print("-"*60)
 
-    # Convert standings to list for sorting
+    # Chuyển standings thành danh sách để sắp xếp
     standings_list = []
     for name, stats in standings.items():
         total_games = stats["wins"] + stats["losses"] + stats["draws"]
@@ -49,7 +49,7 @@ def print_standings(strategies, standings, matrix):
             "avg_turns": avg_turns
         })
 
-    # Sort by win rate descending
+    # Sắp xếp theo tỷ lệ thắng giảm dần
     standings_list.sort(key=lambda x: x["win_rate"], reverse=True)
 
     for stats in standings_list:
